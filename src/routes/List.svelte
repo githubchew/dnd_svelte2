@@ -1,0 +1,46 @@
+<script>
+	import { dndzone } from 'svelte-dnd-action';
+	import { flip } from 'svelte/animate';
+	const flipDurationMs = 200;
+
+	export let items = [];
+	export let type;
+
+	function handleSort(e) {
+		items = e.detail.items;
+	}
+</script>
+
+<section
+	use:dndzone={{ items, flipDurationMs, type }}
+	on:consider={handleSort}
+	on:finalize={handleSort}
+>
+	{#each items as item (item.id)}
+		<div
+			style={type === 'dark' ? 'background-color:rgba(0,0,0,0.7); color: white' : ''}
+			animate:flip={{ duration: flipDurationMs }}
+		>
+			{item.title}
+		</div>
+	{/each}
+</section>
+
+<!-- ------------------------------------------ -->
+<style>
+	div {
+		font-size: 2rem;
+		height: 1.5em;
+		width: 1em;
+		text-align: center;
+		border: 2px solid rgba(233, 207, 8, 0.7);
+		box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+		border-radius: 1rem;;
+		margin: 0.2em;
+		padding: 0.3em;
+		
+	}
+	section {
+		min-height: 12em;
+	}
+</style>
