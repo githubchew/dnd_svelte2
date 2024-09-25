@@ -12,6 +12,7 @@
 </script>
 
 <section
+	class="listSection"
 	use:dndzone={{ items, flipDurationMs, type }}
 	on:consider={handleSort}
 	on:finalize={handleSort}
@@ -28,17 +29,25 @@
 
 <!-- ------------------------------------------ -->
 <style>
+	.listSection {
+		display: flex;
+		flex-wrap: wrap;
+	}
 	div {
 		font-size: 2rem;
 		height: 1.5em;
 		width: 1em;
 		text-align: center;
 		border: 2px solid rgba(233, 207, 8, 0.7);
-		box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
-		border-radius: 1rem;;
+		box-shadow:
+			rgba(0, 0, 0, 0.09) 0px 2px 1px,
+			rgba(0, 0, 0, 0.09) 0px 4px 2px,
+			rgba(0, 0, 0, 0.09) 0px 8px 4px,
+			rgba(0, 0, 0, 0.09) 0px 16px 8px,
+			rgba(0, 0, 0, 0.09) 0px 32px 16px;
+		border-radius: 1.5rem;
 		margin: 0.2em;
 		padding: 0.3em;
-		
 	}
 	section {
 		min-height: 12em;

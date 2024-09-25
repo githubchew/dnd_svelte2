@@ -15,7 +15,7 @@
 		{ id: 9, title: 'i' },
 		{ id: 10, title: 'j' },
 		{ id: 11, title: 'k' },
-		{ id: 12, title: 'l' },
+		{ id: 12, title: 'L' },
 		{ id: 13, title: 'm' },
 		{ id: 14, title: 'n' },
 		{ id: 15, title: 'o' },
@@ -36,10 +36,35 @@
 		{ id: 5, title: '🤖' }
 	];
 	let items3 = [
-		{ id: 1, title: 'a' },
-		{ id: 2, title: 'b' },
-		{ id: 3, title: 'c' },
-		{ id: 4, title: 'd' }
+		{ id: 100, title: 'a' },
+		{ id: 101, title: 'b' },
+		{ id: 102, title: 'c' },
+		{ id: 103, title: 'd' },
+		{ id: 104, title: 'e' },
+		{ id: 105, title: 'f' },
+		{ id: 106, title: 'g' },
+		{ id: 107, title: 'h' },
+		{ id: 108, title: 'i' },
+		{ id: 109, title: 'j' },
+		{ id: 110, title: 'k' },
+		{ id: 111, title: 'L' },
+		{ id: 112, title: 'm' },
+		{ id: 113, title: 'n' },
+		{ id: 114, title: 'o' },
+		{ id: 115, title: 'p' },
+		{ id: 116, title: 'q' },
+		{ id: 117, title: 'r' },
+		{ id: 118, title: 's' },
+		{ id: 119, title: 't' },
+		{ id: 120, title: 'u' },
+		{ id: 121, title: 'v' },
+		{ id: 122, title: 'w' },
+		{ id: 123, title: 'x' },
+		{ id: 124, title: 'y' },
+		{ id: 125, title: 'z' }
+		
+
+
 	];
 </script>
 
@@ -56,10 +81,11 @@
 <hr />
 <List items={items2} type="light" />
 <hr />
-<List items={items3} type="dark" />
-
-<style>
-	:global(body) {
-		background-color: gray;
-	}
-</style>
+<hr />
+<hr />
+<hr />
+<hr />
+<hr />
+<hr />
+<hr />
+<List items={items3} type="light" />
