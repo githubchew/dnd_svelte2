@@ -34,7 +34,6 @@
 		flex-wrap: wrap;
 	}
 	div {
-		font-family: "Comic Sans MS", sans-serif;
 		font-size: 2rem;
 		color: var(--color, black);
 		font-weight: var(--fontWeight, normal);
