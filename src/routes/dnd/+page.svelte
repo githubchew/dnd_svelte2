@@ -32,8 +32,10 @@
 		{ id: 26, title: 'z' }
 	];
 	let items2 = [
-		{ id: 4, title: '😊' },
-		{ id: 5, title: '🤖' }
+		{ id: 200, title: '😊' },
+		{ id: 201, title: '🤖' },
+		{ id: 202, title: '🧸' },
+		{ id: 203, title: '🦘'},
 	];
 	let items3 = [
 		{ id: 100, title: 'a' },
@@ -62,9 +64,6 @@
 		{ id: 123, title: 'x' },
 		{ id: 124, title: 'y' },
 		{ id: 125, title: 'z' }
-		
-
-
 	];
 </script>
 
@@ -77,15 +76,11 @@
 	<h6>drag and drop here</h6>
 </div>
 <hr />
-<List items={items1} type="light" />
-<hr />
-<List items={items2} type="light" />
-<hr />
-<hr />
-<hr />
-<hr />
-<hr />
-<hr />
-<hr />
-<hr />
-<List items={items3} type="light" />
+<div class="ListCustom">
+	<List items={items1} type="light" --color="gray" --color2="gray" --color3="gray" />
+	<hr />
+	<List items={items2} type="light" --color="brown" --color2="orange" --color3="green" />
+	<br />
+
+	<List items={items3} type="light" --color="gray" --color2="gray" --color3="gray" />
+</div>

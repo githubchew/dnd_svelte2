@@ -35,6 +35,7 @@
 	}
 	div {
 		font-size: 2rem;
+		color: var(--color, black);
 		height: 1.5em;
 		width: 1em;
 		text-align: center;
@@ -48,6 +49,14 @@
 		border-radius: 1.5rem;
 		margin: 0.2em;
 		padding: 0.3em;
+	}
+
+	div:nth-child(even) {
+		color: var(--color2,rgba(7, 85, 25, 0.7));
+	}
+
+	div:nth-child(3n) {
+		color: var(--color3, rgba(96, 14, 21, 0.7));
 	}
 	section {
 		min-height: 12em;
