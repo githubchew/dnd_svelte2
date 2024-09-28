@@ -34,8 +34,10 @@
 		flex-wrap: wrap;
 	}
 	div {
+		font-family: cursive, sans-serif;
 		font-size: 2rem;
 		color: var(--color, black);
+		font-weight: var(--fontWeight, normal);
 		height: 1.5em;
 		width: 1em;
 		text-align: center;
@@ -52,7 +54,7 @@
 	}
 
 	div:nth-child(even) {
-		color: var(--color2,rgba(7, 85, 25, 0.7));
+		color: var(--color2, rgba(7, 85, 25, 0.7));
 	}
 
 	div:nth-child(3n) {

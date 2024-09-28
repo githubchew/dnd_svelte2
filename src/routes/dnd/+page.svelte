@@ -35,7 +35,7 @@
 		{ id: 200, title: '😊' },
 		{ id: 201, title: '🤖' },
 		{ id: 202, title: '🧸' },
-		{ id: 203, title: '🦘'},
+		{ id: 203, title: '🦘' }
 	];
 	let items3 = [
 		{ id: 100, title: 'a' },
@@ -79,7 +79,14 @@
 <div class="ListCustom">
 	<List items={items1} type="light" --color="gray" --color2="gray" --color3="gray" />
 	<hr />
-	<List items={items2} type="light" --color="brown" --color2="orange" --color3="green" />
+	<List
+		items={items2}
+		type="light"
+		--color="blue"
+		--color2="darkorange"
+		--color3="green"
+		--fontWeight="bold"
+	/>
 	<br />
 
 	<List items={items3} type="light" --color="gray" --color2="gray" --color3="gray" />
