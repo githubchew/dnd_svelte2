@@ -77,7 +77,7 @@
 </div>
 <hr />
 <div class="ListCustom">
-	<List items={items1} type="light" --color="gray" --color2="gray" --color3="gray" />
+	<List items={items1} type="light" --color="#474747" --color2="#474747" --color3="#474747" />
 	<hr />
 	<List
 		items={items2}
@@ -89,5 +89,5 @@
 	/>
 	<br />
 
-	<List items={items3} type="light" --color="gray" --color2="gray" --color3="gray" />
+	<List items={items3} type="light" --color="#474747" --color2="#474747" --color3="gray" />
 </div>
