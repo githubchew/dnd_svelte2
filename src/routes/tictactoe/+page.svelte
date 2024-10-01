@@ -95,6 +95,7 @@
 <style>
 	.board {
 		display: grid;
+		width: 460px;
 		margin: 0 auto;
 		grid-template-columns: repeat(3, 1fr);
 		grid-gap: 10px;
@@ -104,8 +105,8 @@
 
 	.cell {
 		border-radius: 1rem;
-		width: 200px;
-		height: 200px;
+		/* width: 150px; */
+		height: 150px;
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -147,6 +148,30 @@
 
 		font-weight: bold;
 		animation: mymove 2s infinite;
+	}
+
+	.winning-cell::after {
+		content: '👍';
+		font-size: 4rem;
+		position: absolute;
+		top: -10px;
+		right: -10px;
+		animation: winEmoji 1.5s infinite;
+	}
+
+	@keyframes winEmoji {
+		0% {
+			transform: rotate(0);
+			top: -10px;
+		}
+		30% {
+			transform: rotate(-20deg);
+			top: -70px;
+		}
+		100% {
+			transform: rotate(1deg);
+			translate-y: -10px;
+		}
 	}
 
 	@keyframes mymove {
