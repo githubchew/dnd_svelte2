@@ -71,23 +71,47 @@
 	<title>Dnd</title>
 	<meta name="description" content="About this app" />
 </svelte:head>
-
-<div class="text-column">
-	<h6>drag and drop here</h6>
-</div>
-<hr />
-<div class="ListCustom">
-	<List items={items1} type="light" --color="#474747" --color2="#474747" --color3="#474747" />
+<div class="bodyDND">
+	<div class="text-column">
+		<h6>drag and drop here</h6>
+	</div>
 	<hr />
-	<List
-		items={items2}
-		type="light"
-		--color="blue"
-		--color2="darkorange"
-		--color3="green"
-		--fontWeight="bold"
-	/>
-	<br />
+	<div class="ListCustom">
+		<List items={items1} type="light" --color="#474747" --color2="#474747" --color3="#474747" />
+		<hr />
+		<List
+			items={items2}
+			type="light"
+			--color="blue"
+			--color2="darkorange"
+			--color3="green"
+			--fontWeight="bold"
+		/>
+		<br />
 
-	<List items={items3} type="light" --color="#474747" --color2="#474747" --color3="gray" />
+		<List items={items3} type="light" --color="#474747" --color2="#474747" --color3="gray" />
+	</div>
 </div>
+
+<style>
+	.bodyDND {
+		margin: 0;
+		border-radius: 20% 11% 30% 17% / 29% 11% 31% 23%;
+		box-shadow:
+			rgba(0, 0, 0, 0.07) 0px 1px 1px,
+			rgba(0, 0, 0, 0.07) 0px 2px 2px,
+			rgba(0, 0, 0, 0.07) 0px 4px 4px,
+			rgba(0, 0, 0, 0.07) 0px 8px 8px,
+			rgba(0, 0, 0, 0.07) 0px 16px 16px;
+		padding: 3rem;
+		background: rgb(255, 254, 177);
+		background: linear-gradient(
+			99deg,
+			rgba(255, 254, 177, 1) 0%,
+			rgba(228, 220, 252, 1) 26%,
+			rgb(139, 193, 247) 52%,
+			rgb(224, 255, 199) 76%,
+			rgba(246, 189, 202, 1) 100%
+		);
+	}
+</style>
