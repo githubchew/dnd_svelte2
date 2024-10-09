@@ -34,6 +34,9 @@
 			<li aria-current={$page.url.pathname === '/run' ? 'page' : undefined}>
 				<a href="/run">run</a>
 			</li>
+			<li aria-current={$page.url.pathname === '/sightwordstyping' ? 'page' : undefined}>
+				<a href="/sightwordstyping">swt</a>
+			</li>
 
 			<li aria-current={$page.url.pathname.startsWith('/sverdle') ? 'page' : undefined}>
 				<a href="/sverdle">Sverdle</a>
