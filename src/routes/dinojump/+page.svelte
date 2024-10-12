@@ -1,79 +1,58 @@
 <script>
 	import { onMount } from 'svelte';
 
+	let canvas;
+	let ctx;
 	let dinoSize = 50;
 	let dinoY = 0;
-	let dinoX = 0; // New variable to track dino's horizontal position
+	let dinoX = 0;
 	let isJumping = false;
-	let gravity = 0.2; // Adjust gravity for a balanced descent
+	let gravity = 0.2;
 	let jumpVelocity = 0;
-	let jumpStrength = 10; // Increase jump strength for a faster ascent
+	let jumpStrength = 10;
 	let obstacles = [];
 	let collectibles = [];
 	let gameSpeed = 1.5;
 	let gameOver = false;
 	let score = 0;
-	let collectedEmojis = {}; // Object to store counts of collected emojis
+	let collectedEmojis = {};
+	let health = 3;
+	let isBackgroundRed = false;
+	let collidedMonsters = new Set();
+	let showSadFace = false;
+	let lastCollectibleX = 0;
+	let eyesOpen = true;
+	let shakeTimer = 0;
+	let smile = false;
+	let brightness = 1;
+	let hurtState = false;
+	let heartEyes = false;
 
 	const emojis = [
-		'📏ruler',
-		'🍕pizza',
-		'🐶dog',
-		'🐱cat',
-		'🐭mouse',
-		'🐹',
-		'🐰rabbit',
-		'🦊fox',
-		'🐻bear',
-		'🐼panda',
-		'🐨koala',
-		'🐯tiger',
-		'☃️snowman',
-		'🪁kite',
-		'🎈balloon',
-		'🎁gift',
-		'🎂cake',
-		'🍬lollipop',
-		'🍫chocolate',
-		'🍭candy',
-		'🧸teddybear'
-	]; // Array of random emojis
-	const monsterEmojis = ['👹', '👺', '👻', '💀', '👽', '🤖', '💥⚡👹👿']; // Array of monster emojis
-
-	const heartEmoji = '❤️'; // Heart emoji for health items
-
-	let health = 3; // Initialize health
-	let isBackgroundRed = false; // Track if background should be red
-
-	// Track which monster emojis have been collided with
-	let collidedMonsters = new Set();
-
-	let isFrozen = false; // New variable to track if dino is frozen
-
-	let showSadFace = false; // New variable to control sad face display
-
-	let lastCollectibleX = 0; // Track the x position of the last collectible
+		'📏ruler', '🍕pizza', '🐶', '🐱', '🐭mouse', '🐹', '🐰rabbit', '🦊', '🐻', '🐼', '🐨', '🐯', '☃️', '🪁', '🎈balloon', '🎁gift', '🎂', '🍬', '🍫', '🍭', '🧸'
+	];
+	const monsterEmojis = ['👹', '👺', '👻', '💀', '👽', '🤖', '💥⚡👹👿'];
+	const heartEmoji = '❤️';
 
 	function handleHealthDecrease() {
 		showSadFace = true;
-		isBackgroundRed = true; // Darken the background
+		isBackgroundRed = true;
 		setTimeout(() => {
 			showSadFace = false;
-			isBackgroundRed = false; // Reset background color
+			isBackgroundRed = false;
 		}, 1000);
 	}
 
 	function handleKeyPress(event) {
 		if (event.key === 'x') {
 			dinoSize = 30;
-			dinoX += 100; // Move dino 100px to the right
+			dinoX += 100;
 			setTimeout(() => {
 				dinoSize = 50;
-				dinoX -= 100; // Move dino back to original position
+				dinoX -= 100;
 			}, 400);
 		}
 		if (event.key === ' ' || event.key === 'z') {
-			// Check for spacebar or 'z' key
 			jump();
 		}
 	}
@@ -88,31 +67,131 @@
 	function updateGame() {
 		if (gameOver) return;
 
-		// Update Dino position
-		if (!isFrozen && isJumping) {
+		// Clear the canvas
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+		// Update Dino position, scale, and rotation
+		let dinoScaleY = 1; // Default scale
+		let dinoRotation = 0; // Default rotation
+
+		if (isJumping) {
 			dinoY += jumpVelocity;
-			jumpVelocity -= gravity; // Apply gravity
-			if (dinoY <= 0) {
+			jumpVelocity -= gravity;
+
+			// Scale up when starting the jump
+			if (jumpVelocity > 0) {
+				dinoScaleY = 1.2;
+				dinoRotation = -Math.PI / 40; // Rotate 22.5 degrees
+			}
+			// Scale back to normal at the peak
+			else if (dinoY <= 0) {
 				dinoY = 0;
 				isJumping = false;
+				dinoScaleY = 1;
+				dinoRotation = 0;
 			}
 		}
 
-		// Move obstacles
+		// Calculate eye position and size
+		let eyeOffsetX = 0;
+		let eyeScale = isJumping ? 1.5 : 1; // Eyes are bigger when jumping
+		let nearestEmojiDistance = Infinity;
+
+		collectibles.forEach(collectible => {
+			const distance = Math.abs(collectible.x - dinoX);
+			if (distance < nearestEmojiDistance) {
+				nearestEmojiDistance = distance;
+			}
+		});
+
+		if (nearestEmojiDistance < 100) {
+			eyeOffsetX = 10; // Increase the offset to move eyes further to the right
+		}
+
+		// Update shake effect
+		let shakeScale = 1;
+		let shakeRotation = 0;
+		if (shakeTimer > 0) {
+			shakeScale = 1 + Math.sin(shakeTimer * 0.1) * 0.2; // More dramatic scaling
+			shakeRotation = Math.sin(shakeTimer * 0.2) * 0.3; // More dramatic rotation
+			shakeTimer--;
+		}
+
+		// Draw Dino with scaling and rotation effect
+		ctx.save();
+		ctx.translate(dinoX + dinoSize / 2, canvas.height - dinoY - dinoSize / 2);
+		ctx.scale(1, dinoScaleY); // Apply Y scaling
+		ctx.scale(shakeScale, shakeScale);
+		ctx.rotate(dinoRotation + shakeRotation); // Apply rotation
+		ctx.translate(-dinoSize / 2, -dinoSize / 2);
+		ctx.fillStyle = 'green';
+		ctx.fillRect(0, 0, dinoSize, dinoSize);
+
+		// Draw Dino Eyes or Heart Eyes
+		if (heartEyes) {
+			ctx.font = '20px "Segoe UI Emoji", "Apple Color Emoji"';
+			ctx.fillText('❤️', 10 + eyeOffsetX, 20);
+			ctx.fillText('❤️', 30 + eyeOffsetX, 20);
+		} else {
+			ctx.fillStyle = 'black';
+			const eyeRadius = 5 * (hurtState ? 3 : eyeScale); // Eyes are three times bigger when hurt
+			const eyeScaleY = eyesOpen ? 1 : 0.2; // Scale down on y-axis when eyes are closed
+
+			// Left Eye
+			ctx.save();
+			ctx.translate(15 + eyeOffsetX, 15);
+			ctx.scale(1, eyeScaleY);
+			ctx.beginPath();
+			ctx.arc(0, 0, eyeRadius, 0, Math.PI * 2);
+			ctx.fill();
+			ctx.restore();
+
+			// Right Eye
+			ctx.save();
+			ctx.translate(35 + eyeOffsetX, 15);
+			ctx.scale(1, eyeScaleY);
+			ctx.beginPath();
+			ctx.arc(0, 0, eyeRadius, 0, Math.PI * 2);
+			ctx.fill();
+			ctx.restore();
+		}
+
+		// Draw Frown
+		if (hurtState) {
+			ctx.strokeStyle = 'black';
+			ctx.lineWidth = 2;
+			ctx.beginPath();
+			ctx.arc(25, 40, 10, 0, Math.PI, true); // Frown
+			ctx.stroke();
+		} else if (smile) {
+			ctx.strokeStyle = 'black';
+			ctx.lineWidth = 2;
+			ctx.beginPath();
+			ctx.arc(25, 35, 10, 0, Math.PI, false); // Smile
+			ctx.stroke();
+		}
+
+		ctx.restore();
+
+		// Move and draw obstacles with flip effect
 		obstacles = obstacles
 			.map((obstacle) => ({
 				...obstacle,
-				x: obstacle.x - gameSpeed
+				x: obstacle.x - gameSpeed,
+				flip: Math.sin(obstacle.x * 0.05) // Flip effect
 			}))
 			.filter((obstacle) => obstacle.x > -20);
 
-		// Ensure only one monster obstacle at a time
-		if (obstacles.length === 0 && Math.random() < 0.02) {
-			const monsterEmoji = monsterEmojis[Math.floor(Math.random() * monsterEmojis.length)];
-			obstacles.push({ x: 400, y: 20, width: 220, height: 10, emoji: monsterEmoji });
-		}
+		obstacles.forEach(obstacle => {
+			ctx.save();
+			ctx.translate(obstacle.x + 15, canvas.height - obstacle.y - 15);
+			ctx.scale(obstacle.flip, 1); // Apply flip effect
+			ctx.font = '40px "Segoe UI Emoji", "Apple Color Emoji"'; // Double size
+			ctx.fillText(obstacle.emoji, -15, 15);
+			ctx.restore();
+		});
 
-		// Move collectibles
+		// Move and draw collectibles
 		collectibles = collectibles
 			.map((collectible) => ({
 				...collectible,
@@ -120,7 +199,17 @@
 			}))
 			.filter((collectible) => collectible.x > -20);
 
-		// Add new collectible randomly
+		collectibles.forEach(collectible => {
+			ctx.font = '40px "Segoe UI Emoji", "Apple Color Emoji"'; // Double size
+			ctx.fillText(collectible.emoji, collectible.x, canvas.height - collectible.y);
+		});
+
+		// Add new obstacles and collectibles
+		if (obstacles.length === 0 && Math.random() < 0.02) {
+			const monsterEmoji = monsterEmojis[Math.floor(Math.random() * monsterEmojis.length)];
+			obstacles.push({ x: 400, y: 20, width: 220, height: 10, emoji: monsterEmoji });
+		}
+
 		if (
 			Math.random() < 0.01 &&
 			(collectibles.length === 0 ||
@@ -131,15 +220,15 @@
 				Math.random() < 0.1 ? heartEmoji : emojis[Math.floor(Math.random() * emojis.length)];
 			const newCollectible = { x: 700, y: yPosition, width: 20, height: 20, emoji };
 			collectibles.push(newCollectible);
-			lastCollectibleX = newCollectible.x; // Update the last collectible x position
+			lastCollectibleX = newCollectible.x;
 		}
 
 		// Check for collisions with obstacles
 		for (let obstacle of obstacles) {
 			const dinoBottom = dinoY;
 			const dinoTop = dinoY + dinoSize;
-			const dinoLeft = 0;
-			const dinoRight = dinoSize;
+			const dinoLeft = dinoX;
+			const dinoRight = dinoX + dinoSize;
 
 			const obstacleBottom = obstacle.y;
 			const obstacleTop = obstacle.y + obstacle.height;
@@ -153,19 +242,21 @@
 				dinoBottom < obstacleTop
 			) {
 				if (!collidedMonsters.has(obstacle.emoji)) {
-					health = Math.max(0, health - 1); // Decrease health, ensure it doesn't go below 0
-					handleHealthDecrease(); // Call function to show sad face
+					health = Math.max(0, health - 1);
+					handleHealthDecrease();
 					isBackgroundRed = true;
 					setTimeout(() => {
 						isBackgroundRed = false;
 					}, 300);
 					collidedMonsters.add(obstacle.emoji);
-					isFrozen = true;
+					hurtState = true;
+					shakeTimer = 30; // Start shaking
+					brightness = 0.5; // Dim the brightness
 					setTimeout(() => {
-						isFrozen = false;
+						hurtState = false;
+						brightness = 1; // Reset brightness
 					}, 300);
 				}
-				// Check game over condition after health update
 				if (health <= 0) {
 					gameOver = true;
 				}
@@ -176,8 +267,8 @@
 		collectibles = collectibles.filter((collectible) => {
 			const dinoBottom = dinoY;
 			const dinoTop = dinoY + dinoSize;
-			const dinoLeft = 0;
-			const dinoRight = dinoSize;
+			const dinoLeft = dinoX;
+			const dinoRight = dinoX + dinoSize;
 
 			const collectibleBottom = collectible.y;
 			const collectibleTop = collectible.y + collectible.height;
@@ -191,284 +282,78 @@
 				dinoBottom < collectibleTop
 			) {
 				if (collectible.emoji === heartEmoji) {
-					health = Math.min(health + 1, 3); // Increase health, max 3
+					health = Math.min(health + 1, 3);
+					heartEyes = true; // Set heart eyes
+					setTimeout(() => {
+						heartEyes = false; // Reset after a short time
+					}, 1000);
 				} else {
 					score += 10;
 					collectedEmojis[collectible.emoji] = (collectedEmojis[collectible.emoji] || 0) + 1;
+					smile = true; // Make dino smile
+					setTimeout(() => {
+						smile = false; // Stop smiling after a short time
+					}, 1000);
 				}
-				return false; // Remove collectible
+				return false;
 			}
 			return true;
 		});
 
+		// Draw score and health
+		ctx.fillStyle = 'black';
+		ctx.font = '20px Arial';
+		ctx.fillText(`Score: ${score}`, 10, 20);
+		ctx.fillText(`Health: ${'❤️'.repeat(health)}`, 10, 40);
+
+		// Draw sad face if health decreases
+		if (showSadFace) {
+			ctx.font = '100px Arial';
+			ctx.fillText('😢', canvas.width / 2 - 50, canvas.height / 2);
+		}
+
+		// Draw game over message
+		if (gameOver) {
+			ctx.font = '50px Arial';
+			ctx.fillText('Game Over', canvas.width / 2 - 150, canvas.height / 2);
+		}
+
 		requestAnimationFrame(updateGame);
 	}
 
-	// Reset collidedMonsters when obstacles are cleared
-	function resetCollisions() {
-		collidedMonsters.clear();
-	}
-
 	onMount(() => {
+		canvas = document.querySelector('canvas');
+		ctx = canvas.getContext('2d');
 		window.addEventListener('keydown', handleKeyPress);
 		updateGame();
+
+		// Toggle eyes open/closed every 2 seconds
+		setInterval(() => {
+			eyesOpen = !eyesOpen;
+		}, 2000);
 	});
 </script>
 
-<!-- Remove the audio element for the collectible sound -->
-<!-- <audio id="collectible-sound" src="/retro-coin-1.mp3"></audio> -->
+<canvas width="800" height="400" style="filter: brightness({brightness})"></canvas>
 
-<div class="game-container {isBackgroundRed ? 'red-background dark-background' : ''}">
-	<!-- Display sad face emoji when health decreases -->
-	{#if showSadFace}
-		<div class="sad-face shake">😢</div>
-	{/if}
-
-	<div
-		class="dino {isJumping ? 'jumping' : ''}"
-		style="--dino-size: {dinoSize}px; transform: translate({dinoX}px, -{dinoY}px);"
-	>
-		<div class="eye left-eye"></div>
-		<div class="eye right-eye"></div>
-		<div class="mouth"></div>
-		<!-- Add a div for the mouth -->
-	</div>
-	{#each obstacles as obstacle}
-		<div
-			class={obstacle.emoji === '💥⚡👹👿' ? 'obstacle special' : 'obstacle'}
-			style="left: {obstacle.x}px; height: {obstacle.height}px; bottom: {obstacle.y}px;"
-		>
-			{obstacle.emoji}
-		</div>
-	{/each}
-	{#each collectibles as collectible}
-		<div class="collectible" style="left: {collectible.x}px; bottom: {collectible.y}px;">
-			{collectible.emoji}
-		</div>
-	{/each}
+<div class="emoji-counts">
+	<h3>Collected Emojis:</h3>
+	<ul>
+		{#each Object.entries(collectedEmojis) as [emoji, count]}
+			<li>{emoji}: {count}</li>
+		{/each}
+	</ul>
 </div>
-
-{#if gameOver}
-	<div>Game Over</div>
-{/if}
-
-<div>Score: {score}</div>
-<div>
-	Health: {#each Array(health) as _}{heartEmoji}{/each}
-</div>
-<!-- Display health as heart emojis -->
-<div class="collected-emojis">
-	{#each Object.entries(collectedEmojis) as [emoji, count]}
-		<div>{emoji}: {count}</div>
-	{/each}
-</div>
-
-<!-- Display collected emojis and their counts -->
 
 <style>
-	.game-container {
-		position: relative;
-		width: 800px;
-		height: 400px;
-		overflow: hidden;
+	canvas {
 		border: 1px solid black;
 		background-image: url('https://img.freepik.com/free-vector/background-scene-wtih-blue-sky-green-grass_1308-101501.jpg?t=st=1728634920~exp=1728638520~hmac=445fbabc760de676cd6a191b5d70fafa86b1fab88a2300873591c31fc7930ca0&w=2000');
 		background-size: cover;
 		background-position: center;
-		z-index: -1;
-		transition: filter 0.5s ease; /* Add transition for smooth effect */
 	}
-
-	.game-container::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background-image: inherit; /* Use the same background image */
-		background-size: inherit;
-		background-position: inherit;
-		filter: blur(1px); /* Apply blur effect */
-		z-index: -1; /* Ensure the overlay is behind other content */
-	}
-
-	.red-background {
-		background-color: red;
-		z-index: -1;
-	}
-
-	.dark-background {
-		filter: brightness(0.5); /* Darken the background */
-	}
-
-	.dino {
-		position: absolute;
-		bottom: 0;
-		width: var(--dino-size);
-		height: var(--dino-size);
-		background-color: green;
-		transition:
-			width 0.3s,
-			height 0.3s,
-			transform 0.4s; /* Add transform transition */
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		z-index: 1; /* Ensure dino is above the background */
-	}
-
-	.eye {
-		position: absolute;
-		width: 10px;
-		height: 10px;
-		background-color: black;
-		border-radius: 50%;
-		animation: blink 4s infinite; /* Adjust the duration to 4 seconds */
-	}
-
-	.left-eye {
-		left: 15px; /* Adjusted to ensure no overlap */
-	}
-
-	.right-eye {
-		left: 35px; /* Adjusted to ensure no overlap */
-	}
-
-	.jumping .eye {
-		width: 20px; /* Double the size */
-		height: 20px; /* Double the size */
-		transition:
-			width 0.3s,
-			height 0.3s,
-			left 0.3s; /* Smooth transition */
-	}
-
-	.jumping .left-eye {
-		left: 25px; /* Move further to the right */
-	}
-
-	.jumping .right-eye {
-		left: 55px; /* Move further to the right */
-	}
-
-	.mouth {
-		position: absolute;
-		bottom: -6px; /* Position the mouth */
-		width: 30px;
-		height: 10px;
-		background-color: black;
-		border-radius: 0px 0px 10 10px; /* Create a bottom half-circle */
-	}
-
-	@keyframes blink {
-		0%,
-		5%,
-		95%,
-		100% {
-			transform: scaleY(1);
-		}
-		2.5%,
-		97.5% {
-			transform: scaleY(0.1);
-		}
-	}
-
-	.obstacle {
-		position: absolute;
-		bottom: 0;
-		width: 20px;
-		height: 300px;
-		font-size: 30px; /* Increase font size for monster emoji */
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		transform: translateY(-10px); /* Move monster emoji higher */
-		z-index: 2; /* Ensure obstacles are above the pseudo-element */
-	}
-
-	.obstacle.special {
-		transform: translateY(-100px); /* Move special monster emoji one-third higher */
-	}
-
-	.obstacle::before {
-		content: '';
-		position: absolute;
-		width: 40px;
-		height: 40px;
-		border-radius: 50%;
-		background-color: rgba(244, 121, 121, 0.5);
-		animation: pulse 1.5s infinite;
-		z-index: 1; /* Ensure pseudo-element is below the emoji */
-	}
-
-	.air-obstacle {
-		position: absolute;
-		width: 20px;
-		height: 20px;
-		font-size: 30px; /* Increase font size for monster emoji */
-		transform: translateY(-10px); /* Move monster emoji higher */
-	}
-
-	.collectible {
-		position: absolute;
-		width: 20px;
-		height: 20px;
-		font-size: 30px; /* Increase font size for other emojis */
-		z-index: 1; /* Ensure collectibles are above the background */
-	}
-
-	.collected-emojis {
-		margin-top: 10px;
-		font-size: 20px;
-	}
-
-	@keyframes pulse {
-		0% {
-			transform: scale(1);
-			opacity: 0.5;
-		}
-		50% {
-			transform: scale(1.2);
-			opacity: 1;
-		}
-		100% {
-			transform: scale(1);
-			opacity: 0.5;
-		}
-	}
-
-	.sad-face {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		font-size: 100px; /* Adjust size as needed */
-		z-index: 10; /* Ensure it appears above other elements */
-	}
-
-	.shake {
-		animation: shake 0.5s; /* Duration of the shake effect */
-		animation-iteration-count: infinite; /* Repeat the animation */
-	}
-
-	@keyframes shake {
-		0%,
-		100% {
-			transform: translate(-50%, -50%);
-		}
-		10%,
-		30%,
-		50%,
-		70%,
-		90% {
-			transform: translate(-48%, -50%);
-		}
-		20%,
-		40%,
-		60%,
-		80% {
-			transform: translate(-52%, -50%);
-		}
+	.emoji-counts {
+		margin-top: 20px;
+		font-size: 18px;
 	}
 </style>
