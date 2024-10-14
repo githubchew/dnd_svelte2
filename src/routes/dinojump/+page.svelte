@@ -16,7 +16,7 @@
 	let gameOver = false;
 	let score = 0;
 	let collectedEmojis = {};
-	let health = 3;
+	let health = 4;
 	let isBackgroundRed = false;
 	let collidedMonsters = new Set();
 	let showSadFace = false;
@@ -35,18 +35,18 @@
 	let particles = []; // Array to store particles
 
 	const emojis = [
-		'📏ruler',
+		'🧦socks',
+		'👕shirt',
+		'👠shoe',
+		'👟sneaker',
+		'👒hat',
 		'🍕pizza',
-		'🐶',
-		'🐱',
-		'🐭mouse',
-		'🐹',
 		'🐰rabbit',
 		'🦊',
 		'🐻bear',
 		'🐼panda',
 		'🐨koala',
-		'🐯',
+		'🐯tiger',
 		'☃️snowman',
 		'🪁kite',
 		'🎈balloon',
@@ -98,7 +98,7 @@
 	function handleKeyPress(event) {
 		if (event.key === 'x' && !isAnimating) {
 			isAnimating = true;
-			const targetSize = 30;
+			const targetSize = 23;
 			const targetX = dinoX + 100;
 			const originalSize = dinoSize;
 			const originalX = dinoX;
@@ -223,7 +223,11 @@
 		ctx.rotate(dinoRotation + shakeRotation); // Apply rotation
 		ctx.translate(-dinoSize / 2, -dinoSize / 2);
 		ctx.fillStyle = 'green';
-		ctx.fillRect(0, 0, dinoSize, dinoSize);
+
+		// Use roundRect for rounded edges
+		ctx.beginPath();
+		ctx.roundRect(0, 0, dinoSize, dinoSize, 10); // 10 is the corner radius
+		ctx.fill();
 
 		// Draw Dino Eyes or Heart Eyes
 		if (heartEyes) {
