@@ -27,12 +27,33 @@
 	let brightness = 1;
 	let hurtState = false;
 	let heartEyes = false;
+	let isAnimating = false;
 
 	const emojis = [
-		'📏ruler', '🍕pizza', '🐶', '🐱', '🐭mouse', '🐹', '🐰rabbit', '🦊', '🐻', '🐼', '🐨', '🐯', '☃️', '🪁', '🎈balloon', '🎁gift', '🎂', '🍬', '🍫', '🍭', '🧸'
+		'📏ruler',
+		'🍕pizza',
+		'🐶',
+		'🐱',
+		'🐭mouse',
+		'🐹',
+		'🐰rabbit',
+		'🦊',
+		'🐻bear',
+		'🐼panda',
+		'🐨koala',
+		'🐯',
+		'☃️snowman',
+		'🪁kite',
+		'🎈balloon',
+		'🎁gift',
+		'🎂cake',
+		'🍬candy',
+		'🍫chocolate',
+		'🍭lollipop',
+		'🧸teddybear'
 	];
-	const monsterEmojis = ['👹', '👺', '👻', '💀', '👽', '🤖', '💥⚡👹👿'];
-	const heartEmoji = '❤️';
+	const monsterEmojis = ['👹', '👺', '👻ghost', '💀', '👽alien', '🤖robot', '💥⚡👹👿'];
+	const heartEmoji = '❤';
 
 	function handleHealthDecrease() {
 		showSadFace = true;
@@ -44,13 +65,50 @@
 	}
 
 	function handleKeyPress(event) {
-		if (event.key === 'x') {
-			dinoSize = 30;
-			dinoX += 100;
-			setTimeout(() => {
-				dinoSize = 50;
-				dinoX -= 100;
-			}, 400);
+		if (event.key === 'x' && !isAnimating) {
+			isAnimating = true;
+			const targetSize = 30;
+			const targetX = dinoX + 100;
+			const originalSize = dinoSize;
+			const originalX = dinoX;
+			const duration = 400; // Duration in milliseconds
+			const startTime = performance.now();
+
+			function animate(time) {
+				const elapsed = time - startTime;
+				const progress = Math.min(elapsed / duration, 1);
+
+				// Linear interpolation for smooth transition
+				dinoSize = originalSize + (targetSize - originalSize) * progress;
+				dinoX = originalX + (targetX - originalX) * progress;
+
+				if (progress < 1) {
+					requestAnimationFrame(animate);
+				} else {
+					// Reverse the transition
+					setTimeout(() => {
+						const reverseStartTime = performance.now();
+
+						function reverseAnimate(reverseTime) {
+							const reverseElapsed = reverseTime - reverseStartTime;
+							const reverseProgress = Math.min(reverseElapsed / duration, 1);
+
+							dinoSize = targetSize + (originalSize - targetSize) * reverseProgress;
+							dinoX = targetX + (originalX - targetX) * reverseProgress;
+
+							if (reverseProgress < 1) {
+								requestAnimationFrame(reverseAnimate);
+							} else {
+								isAnimating = false; // Reset the flag after animation completes
+							}
+						}
+
+						requestAnimationFrame(reverseAnimate);
+					}, 400);
+				}
+			}
+
+			requestAnimationFrame(animate);
 		}
 		if (event.key === ' ' || event.key === 'z') {
 			jump();
@@ -97,7 +155,7 @@
 		let eyeScale = isJumping ? 1.5 : 1; // Eyes are bigger when jumping
 		let nearestEmojiDistance = Infinity;
 
-		collectibles.forEach(collectible => {
+		collectibles.forEach((collectible) => {
 			const distance = Math.abs(collectible.x - dinoX);
 			if (distance < nearestEmojiDistance) {
 				nearestEmojiDistance = distance;
@@ -182,12 +240,21 @@
 			}))
 			.filter((obstacle) => obstacle.x > -20);
 
-		obstacles.forEach(obstacle => {
+		obstacles.forEach((obstacle) => {
 			ctx.save();
 			ctx.translate(obstacle.x + 15, canvas.height - obstacle.y - 15);
-			ctx.scale(obstacle.flip, 1); // Apply flip effect
-			ctx.font = '40px "Segoe UI Emoji", "Apple Color Emoji"'; // Double size
-			ctx.fillText(obstacle.emoji, -15, 15);
+
+			if (obstacle.emoji === '💥⚡👹👿') {
+				// Rotate the emoji to be vertical
+				ctx.rotate(-Math.PI / 2); // Rotate 90 degrees counter-clockwise
+				ctx.translate(-30, 0); // Adjust position after rotation
+				ctx.font = '40px "Segoe UI Emoji", "Apple Color Emoji"'; // Double size
+				ctx.fillText(obstacle.emoji, -15, 15);
+			} else {
+				ctx.scale(obstacle.flip, 1); // Apply flip effect
+				ctx.font = '40px "Segoe UI Emoji", "Apple Color Emoji"'; // Double size
+				ctx.fillText(obstacle.emoji, -15, 15);
+			}
 			ctx.restore();
 		});
 
@@ -199,7 +266,7 @@
 			}))
 			.filter((collectible) => collectible.x > -20);
 
-		collectibles.forEach(collectible => {
+		collectibles.forEach((collectible) => {
 			ctx.font = '40px "Segoe UI Emoji", "Apple Color Emoji"'; // Double size
 			ctx.fillText(collectible.emoji, collectible.x, canvas.height - collectible.y);
 		});
@@ -207,7 +274,8 @@
 		// Add new obstacles and collectibles
 		if (obstacles.length === 0 && Math.random() < 0.02) {
 			const monsterEmoji = monsterEmojis[Math.floor(Math.random() * monsterEmojis.length)];
-			obstacles.push({ x: 400, y: 20, width: 220, height: 10, emoji: monsterEmoji });
+			const yPosition = monsterEmoji === '💥⚡👹👿' ? 50 : 20; // Set y position for vertical emoji
+			obstacles.push({ x: 400, y: yPosition, width: 220, height: 10, emoji: monsterEmoji });
 		}
 
 		if (
@@ -230,8 +298,8 @@
 			const dinoLeft = dinoX;
 			const dinoRight = dinoX + dinoSize;
 
-			const obstacleBottom = obstacle.y;
-			const obstacleTop = obstacle.y + obstacle.height;
+			const obstacleBottom = obstacle.emoji === '💥⚡👹👿' ? obstacle.y - 50 : obstacle.y;
+			const obstacleTop = obstacleBottom + obstacle.height;
 			const obstacleLeft = obstacle.x;
 			const obstacleRight = obstacle.x + obstacle.width;
 
@@ -348,7 +416,7 @@
 <style>
 	canvas {
 		border: 1px solid black;
-		background-image: url('https://img.freepik.com/free-vector/background-scene-wtih-blue-sky-green-grass_1308-101501.jpg?t=st=1728634920~exp=1728638520~hmac=445fbabc760de676cd6a191b5d70fafa86b1fab88a2300873591c31fc7930ca0&w=2000');
+		background-image: url('https://img.freepik.com/free-vector/empty-park-scene-with-river-simple-style_1308-61439.jpg?t=st=1728864752~exp=1728868352~hmac=ad79e75383acf1f3c011e4971f660838d8b2d6db0e749918f4a700ce7e359034&w=1800');
 		background-size: cover;
 		background-position: center;
 	}
