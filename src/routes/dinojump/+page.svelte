@@ -28,6 +28,8 @@
 	let hurtState = false;
 	let heartEyes = false;
 	let isAnimating = false;
+	let animationFrameId; // Track the current animation frame ID
+	let debugMode = false; // Debug mode toggle
 
 	const emojis = [
 		'📏ruler',
@@ -89,21 +91,21 @@
 					setTimeout(() => {
 						const reverseStartTime = performance.now();
 
-						function reverseAnimate(reverseTime) {
-							const reverseElapsed = reverseTime - reverseStartTime;
-							const reverseProgress = Math.min(reverseElapsed / duration, 1);
+					function reverseAnimate(reverseTime) {
+						const reverseElapsed = reverseTime - reverseStartTime;
+						const reverseProgress = Math.min(reverseElapsed / duration, 1);
 
-							dinoSize = targetSize + (originalSize - targetSize) * reverseProgress;
-							dinoX = targetX + (originalX - targetX) * reverseProgress;
+						dinoSize = targetSize + (originalSize - targetSize) * reverseProgress;
+						dinoX = targetX + (originalX - targetX) * reverseProgress;
 
-							if (reverseProgress < 1) {
-								requestAnimationFrame(reverseAnimate);
-							} else {
-								isAnimating = false; // Reset the flag after animation completes
-							}
+						if (reverseProgress < 1) {
+							requestAnimationFrame(reverseAnimate);
+						} else {
+							isAnimating = false; // Reset the flag after animation completes
 						}
+					}
 
-						requestAnimationFrame(reverseAnimate);
+					requestAnimationFrame(reverseAnimate);
 					}, 400);
 				}
 			}
@@ -231,6 +233,12 @@
 
 		ctx.restore();
 
+		// Draw Dino hitbox if debug mode is on
+		if (debugMode) {
+			ctx.strokeStyle = 'red';
+			ctx.strokeRect(dinoX, canvas.height - dinoY - dinoSize, dinoSize, dinoSize);
+		}
+
 		// Move and draw obstacles with flip effect
 		obstacles = obstacles
 			.map((obstacle) => ({
@@ -256,6 +264,12 @@
 				ctx.fillText(obstacle.emoji, -15, 15);
 			}
 			ctx.restore();
+
+			// Draw obstacle hitbox if debug mode is on
+			if (debugMode) {
+				ctx.strokeStyle = 'red';
+				ctx.strokeRect(obstacle.x, canvas.height - obstacle.y - obstacle.height, obstacle.width, obstacle.height);
+			}
 		});
 
 		// Move and draw collectibles
@@ -269,7 +283,14 @@
 		collectibles.forEach((collectible) => {
 			ctx.font = '40px "Segoe UI Emoji", "Apple Color Emoji"'; // Double size
 			ctx.fillText(collectible.emoji, collectible.x, canvas.height - collectible.y);
+
+			// Draw collectible hitbox if debug mode is on
+			if (debugMode) {
+				ctx.strokeStyle = 'red';
+				ctx.strokeRect(collectible.x, canvas.height - collectible.y - collectible.height, collectible.width, collectible.height);
+			}
 		});
+
 
 		// Add new obstacles and collectibles
 		if (obstacles.length === 0 && Math.random() < 0.02) {
@@ -386,7 +407,41 @@
 			ctx.fillText('Game Over', canvas.width / 2 - 150, canvas.height / 2);
 		}
 
-		requestAnimationFrame(updateGame);
+		animationFrameId = requestAnimationFrame(updateGame);
+	}
+
+	function resetGame() {
+		dinoY = 0;
+		dinoX = 0;
+		isJumping = false;
+		jumpVelocity = 0;
+		obstacles = [];
+		collectibles = [];
+		gameOver = false;
+		score = 0;
+		collectedEmojis = {};
+		health = 3;
+		collidedMonsters.clear();
+		shakeTimer = 0;
+		brightness = 1;
+		hurtState = false;
+		heartEyes = false;
+		smile = false;
+		showSadFace = false;
+		isBackgroundRed = false;
+		isAnimating = false;
+	}
+
+	function handleNewGame() {
+		if (animationFrameId) {
+			cancelAnimationFrame(animationFrameId); // Cancel the current animation frame
+		}
+		resetGame();
+		updateGame();
+	}
+
+	function toggleDebugMode() {
+		debugMode = !debugMode;
 	}
 
 	onMount(() => {
@@ -413,6 +468,9 @@
 	</ul>
 </div>
 
+<button on:click={handleNewGame}>New Game</button>
+<button on:click={toggleDebugMode}>{debugMode ? 'Disable' : 'Enable'} Debug Mode</button>
+
 <style>
 	canvas {
 		border: 1px solid black;
@@ -423,5 +481,11 @@
 	.emoji-counts {
 		margin-top: 20px;
 		font-size: 18px;
+	}
+	button {
+		margin-top: 20px;
+		padding: 10px 20px;
+		font-size: 16px;
+		cursor: pointer;
 	}
 </style>
