@@ -32,6 +32,7 @@
 	let debugMode = false; // Debug mode toggle
 	let collectibleSound;
 	let jumpSound; // Declare a variable for the jump sound
+	let particles = []; // Array to store particles
 
 	const emojis = [
 		'📏ruler',
@@ -58,6 +59,32 @@
 	];
 	const monsterEmojis = ['👹', '👺', '👻ghost', '💀', '👽alien', '🤖robot', '💥⚡👹👿'];
 	const heartEmoji = '❤';
+
+	class Particle {
+		constructor(x, y) {
+			this.x = x;
+			this.y = y;
+			this.size = Math.random() * 5 + 2; // Random size
+			this.speedX = Math.random() * 2 - 1; // Random horizontal speed
+			this.speedY = Math.random() * -2; // Random vertical speed
+			this.color = 'rgba(255, 255, 0, 0.8)'; // Yellow color with transparency
+			this.life = 100; // Particle life
+		}
+
+		update() {
+			this.x += this.speedX;
+			this.y += this.speedY;
+			this.size *= 0.95; // Shrink over time
+			this.life -= 1; // Decrease life
+		}
+
+		draw(ctx) {
+			ctx.fillStyle = this.color;
+			ctx.beginPath();
+			ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+			ctx.fill();
+		}
+	}
 
 	function handleHealthDecrease() {
 		showSadFace = true;
@@ -129,6 +156,10 @@
 
 	function handleCollectibleCollision() {
 		collectibleSound.play();
+		// Generate particles at the collectible's position
+		for (let i = 0; i < 10; i++) {
+			particles.push(new Particle(dinoX + dinoSize / 2, canvas.height - dinoY - dinoSize / 2));
+		}
 	}
 
 	function updateGame() {
@@ -405,6 +436,15 @@
 				return false;
 			}
 			return true;
+		});
+
+		// Update and draw particles
+		particles.forEach((particle, index) => {
+			particle.update();
+			particle.draw(ctx);
+			if (particle.life <= 0) {
+				particles.splice(index, 1); // Remove dead particles
+			}
 		});
 
 		// Draw score and health
