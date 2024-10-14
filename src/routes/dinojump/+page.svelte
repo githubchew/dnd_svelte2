@@ -464,17 +464,37 @@
 
 	onMount(() => {
 		canvas = document.querySelector('canvas');
-		ctx = canvas.getContext('2d');
-		window.addEventListener('keydown', handleKeyPress);
-		updateGame();
-		collectibleSound = new Audio('retro-coin-1.mp3'); // Load your sound file
-		jumpSound = new Audio('cartoon-jump-1.mp3'); // Load your jump sound file
+		if (canvas) {
+			ctx = canvas.getContext('2d');
+			window.addEventListener('keydown', handleKeyPress);
 
-		// Toggle eyes open/closed every 2 seconds
-		setInterval(() => {
-			eyesOpen = !eyesOpen;
-		}, 2000);
+			// Load audio files
+			collectibleSound = new Audio('retro-coin-1.mp3');
+			jumpSound = new Audio('cartoon-jump-1.mp3');
+
+			// Add error handling for audio loading
+			collectibleSound.onerror = () => console.error('Failed to load collectible sound');
+			jumpSound.onerror = () => console.error('Failed to load jump sound');
+
+			// Ensure audio is loaded
+			collectibleSound.addEventListener('canplaythrough', startGame, { once: true });
+			jumpSound.addEventListener('canplaythrough', startGame, { once: true });
+
+			// Toggle eyes open/closed every 2 seconds
+			setInterval(() => {
+				eyesOpen = !eyesOpen;
+			}, 2000);
+		} else {
+			console.error('Canvas not found');
+		}
 	});
+
+	function startGame() {
+		if (collectibleSound.readyState >= 4 && jumpSound.readyState >= 4) {
+			console.log('Starting game');
+			updateGame(); // Start the game loop
+		}
+	}
 </script>
 
 <canvas width="800" height="400" style="filter: brightness({brightness})"></canvas>
