@@ -30,6 +30,8 @@
 	let isAnimating = false;
 	let animationFrameId; // Track the current animation frame ID
 	let debugMode = false; // Debug mode toggle
+	let collectibleSound;
+	let jumpSound; // Declare a variable for the jump sound
 
 	const emojis = [
 		'📏ruler',
@@ -91,21 +93,21 @@
 					setTimeout(() => {
 						const reverseStartTime = performance.now();
 
-					function reverseAnimate(reverseTime) {
-						const reverseElapsed = reverseTime - reverseStartTime;
-						const reverseProgress = Math.min(reverseElapsed / duration, 1);
+						function reverseAnimate(reverseTime) {
+							const reverseElapsed = reverseTime - reverseStartTime;
+							const reverseProgress = Math.min(reverseElapsed / duration, 1);
 
-						dinoSize = targetSize + (originalSize - targetSize) * reverseProgress;
-						dinoX = targetX + (originalX - targetX) * reverseProgress;
+							dinoSize = targetSize + (originalSize - targetSize) * reverseProgress;
+							dinoX = targetX + (originalX - targetX) * reverseProgress;
 
-						if (reverseProgress < 1) {
-							requestAnimationFrame(reverseAnimate);
-						} else {
-							isAnimating = false; // Reset the flag after animation completes
+							if (reverseProgress < 1) {
+								requestAnimationFrame(reverseAnimate);
+							} else {
+								isAnimating = false; // Reset the flag after animation completes
+							}
 						}
-					}
 
-					requestAnimationFrame(reverseAnimate);
+						requestAnimationFrame(reverseAnimate);
 					}, 400);
 				}
 			}
@@ -121,7 +123,12 @@
 		if (!isJumping) {
 			isJumping = true;
 			jumpVelocity = jumpStrength;
+			jumpSound.play(); // Play the jump sound
 		}
+	}
+
+	function handleCollectibleCollision() {
+		collectibleSound.play();
 	}
 
 	function updateGame() {
@@ -268,7 +275,12 @@
 			// Draw obstacle hitbox if debug mode is on
 			if (debugMode) {
 				ctx.strokeStyle = 'red';
-				ctx.strokeRect(obstacle.x, canvas.height - obstacle.y - obstacle.height, obstacle.width, obstacle.height);
+				ctx.strokeRect(
+					obstacle.x,
+					canvas.height - obstacle.y - obstacle.height,
+					obstacle.width,
+					obstacle.height
+				);
 			}
 		});
 
@@ -287,10 +299,14 @@
 			// Draw collectible hitbox if debug mode is on
 			if (debugMode) {
 				ctx.strokeStyle = 'red';
-				ctx.strokeRect(collectible.x, canvas.height - collectible.y - collectible.height, collectible.width, collectible.height);
+				ctx.strokeRect(
+					collectible.x,
+					canvas.height - collectible.y - collectible.height,
+					collectible.width,
+					collectible.height
+				);
 			}
 		});
-
 
 		// Add new obstacles and collectibles
 		if (obstacles.length === 0 && Math.random() < 0.02) {
@@ -370,6 +386,8 @@
 				dinoTop > collectibleBottom &&
 				dinoBottom < collectibleTop
 			) {
+				handleCollectibleCollision(); // Play sound on collision
+
 				if (collectible.emoji === heartEmoji) {
 					health = Math.min(health + 1, 3);
 					heartEyes = true; // Set heart eyes
@@ -449,6 +467,8 @@
 		ctx = canvas.getContext('2d');
 		window.addEventListener('keydown', handleKeyPress);
 		updateGame();
+		collectibleSound = new Audio('retro-coin-1.mp3'); // Load your sound file
+		jumpSound = new Audio('cartoon-jump-1.mp3'); // Load your jump sound file
 
 		// Toggle eyes open/closed every 2 seconds
 		setInterval(() => {
@@ -470,6 +490,9 @@
 
 <button on:click={handleNewGame}>New Game</button>
 <button on:click={toggleDebugMode}>{debugMode ? 'Disable' : 'Enable'} Debug Mode</button>
+
+<audio id="collectible-sound" src="retro-coin-1.mp3" preload="auto"></audio>
+<audio id="jump-sound" src="cartoon-jump-1.mp3" preload="auto"></audio>
 
 <style>
 	canvas {
