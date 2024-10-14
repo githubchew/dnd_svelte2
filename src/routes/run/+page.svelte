@@ -8,12 +8,14 @@
 	let storedTodos;
 
 	onMount(() => {
-		storedTodos = window.localStorage.getItem('todos');
-		if (storedTodos) {
-			todos = JSON.parse(storedTodos).map((todo) => ({
-				...todo,
-				date: new Date(todo.timestamp)
-			}));
+		if (typeof window !== 'undefined') { // Ensure window is available
+			storedTodos = window.localStorage.getItem('todos');
+			if (storedTodos) {
+				todos = JSON.parse(storedTodos).map((todo) => ({
+					...todo,
+					date: new Date(todo.timestamp)
+				}));
+			}
 		}
 	});
 
@@ -23,6 +25,28 @@
 			const timestamp = `${date.getDate()} ${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`;
 			todos = [...todos, { text: newTodo, emoji: getRandomEmoji(), timestamp, date }];
 			newTodo = 'run'; // Reset the newTodo value after adding a todo
+			if (typeof window !== 'undefined') { // Ensure window is available
+				window.localStorage.setItem(
+					'todos',
+					JSON.stringify(
+						todos.map((todo) => ({
+							text: todo.text,
+							emoji: todo.emoji,
+							timestamp: todo.timestamp
+						}))
+					)
+				);
+			}
+		}
+	}
+
+	function getRandomEmoji() {
+		return feelGoodEmojis[Math.floor(Math.random() * feelGoodEmojis.length)];
+	}
+
+	function removeTodo(index) {
+		todos = todos.filter((todo, i) => i !== index);
+		if (typeof window !== 'undefined') { // Ensure window is available
 			window.localStorage.setItem(
 				'todos',
 				JSON.stringify(
@@ -34,24 +58,6 @@
 				)
 			);
 		}
-	}
-
-	function getRandomEmoji() {
-		return feelGoodEmojis[Math.floor(Math.random() * feelGoodEmojis.length)];
-	}
-
-	function removeTodo(index) {
-		todos = todos.filter((todo, i) => i !== index);
-		window.localStorage.setItem(
-			'todos',
-			JSON.stringify(
-				todos.map((todo) => ({
-					text: todo.text,
-					emoji: todo.emoji,
-					timestamp: todo.timestamp
-				}))
-			)
-		);
 	}
 
 	$: lastWeekTodos = todos.filter((todo) => {
