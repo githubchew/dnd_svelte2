@@ -112,6 +112,7 @@
 		list-style: none;
 		background: var(--background);
 		background-size: contain;
+		flex-wrap: wrap; /* Enable wrapping of li elements */
 	}
 
 	li {
