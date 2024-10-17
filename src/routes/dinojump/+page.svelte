@@ -33,6 +33,7 @@
 	let collectibleSound;
 	let jumpSound; // Declare a variable for the jump sound
 	let particles = []; // Array to store particles
+	let monsterSpeed = Math.random() * (5 - 1.5) + 0.5; // Random speed between 1.5 and 5
 
 	const emojis = [
 		'🧦socks',
@@ -283,11 +284,14 @@
 
 		// Move and draw obstacles with flip effect
 		obstacles = obstacles
-			.map((obstacle) => ({
-				...obstacle,
-				x: obstacle.x - gameSpeed,
-				flip: Math.sin(obstacle.x * 0.05) // Flip effect
-			}))
+			.map((obstacle) => {
+				const speed = monsterEmojis.includes(obstacle.emoji) ? monsterSpeed : gameSpeed;
+				return {
+					...obstacle,
+					x: obstacle.x - speed,
+					flip: Math.sin(obstacle.x * 0.05) // Flip effect
+				};
+			})
 			.filter((obstacle) => obstacle.x > -20);
 
 		obstacles.forEach((obstacle) => {

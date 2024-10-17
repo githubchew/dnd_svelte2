@@ -13,7 +13,16 @@
 		'dolphin 🐬',
 		'robot 🤖',
 		'grape🍇',
-		'ice cream 🍦'
+		'ice cream 🍦',
+		'going home🏠',
+		'going to school🏫',
+		'chocolate🍫',
+		'pizza🍕',
+		'burger🍔',
+		'hot dog🌭',
+		'sandwich🥪',
+		'cookie🍪',
+		'cake🍰'
 	];
 
 	function handleClick(index) {
