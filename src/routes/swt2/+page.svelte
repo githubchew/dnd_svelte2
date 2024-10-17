@@ -359,7 +359,7 @@
 	});
 
 	function getRandomWord() {
-		const wordList = customWords ? customWords.split(',').map(word => word.trim()) : words;
+		const wordList = customWords ? customWords.split(',').map((word) => word.trim()) : words;
 		return wordList[Math.floor(Math.random() * wordList.length)];
 	}
 
@@ -387,7 +387,7 @@
 	}
 
 	function drawParticles() {
-		particles = particles.filter(particle => {
+		particles = particles.filter((particle) => {
 			ctx.fillStyle = 'red';
 			ctx.fillRect(particle.x, particle.y, 2, 2);
 			particle.x += particle.dx;
@@ -445,7 +445,7 @@
 			if (score % 5 === 0) {
 				health++;
 			}
-			
+
 			correctlyTypedWords = [...correctlyTypedWords, targetText];
 			newWordIndex = correctlyTypedWords.length - 1; // Set the index of the new word
 
@@ -458,7 +458,7 @@
 			zombiePosition = canvas.width;
 			inputText = '';
 			currentMonster = getRandomMonster();
-			
+
 			// Add a 2-second delay before starting the new word cycle
 			setTimeout(() => {
 				targetText = getRandomWord();
@@ -515,8 +515,10 @@
 
 <div class="container {flashScreen ? 'flash' : ''}">
 	<div class="correct-words">
-		Correctly Typed Words: {#each correctlyTypedWords as word, index}
-			<span class:highlight={index === newWordIndex}>{word}{index < correctlyTypedWords.length - 1 ? ', ' : ''}</span>
+		{#each correctlyTypedWords as word, index}
+			<span class:highlight={index === newWordIndex}
+				>{word}{index < correctlyTypedWords.length - 1 ? ', ' : ''}</span
+			>
 		{/each}
 	</div>
 	<div class="target-word" style="color: {hintColor};">
@@ -524,12 +526,20 @@
 		{displayedText}
 	</div>
 	<input type="text" bind:value={inputText} on:input={handleInput} placeholder="Type the word" />
-	<input type="text" class="small-input" bind:value={customWords} on:input={handleCustomWordsInput} placeholder=" custom words by commas" />
+	<input
+		type="text"
+		class="small-input"
+		bind:value={customWords}
+		on:input={handleCustomWordsInput}
+		placeholder=" custom words by commas"
+	/>
 	<canvas bind:this={canvas} width="400" height="100"></canvas>
 	<div class="score">Score: {score}</div>
 	<div class="typed-words">Typed: {inputText}</div>
 	<div class="health">Health: {'❤️'.repeat(health)}</div>
-	<div class="timer">Time Left: {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}</div>
+	<div class="timer">
+		Time Left: {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
+	</div>
 	<button on:click={startNewGame}>New Game</button>
 </div>
 
@@ -551,11 +561,12 @@
 	}
 
 	input {
-		font-size: 2em;
-		margin-top: 20px;
-		margin-bottom: 40px;
+		font-size: 3em;
+		margin-bottom: 10px;
 		border-radius: 2rem;
 		border: none;
+		padding-left: 1rem;
+		padding-right: 1rem;
 	}
 
 	.small-input {
@@ -586,8 +597,7 @@
 	}
 
 	.correct-words {
-		margin-top: 20px;
-		font-size: 1.5em;
+		font-size: 1em;
 		color: #333;
 	}
 
@@ -604,6 +614,8 @@
 	.highlight {
 		color: red; /* Change to your desired highlight color */
 		font-size: 1.4em; /* Increase font size */
-		transition: color 0.3s ease-in-out, font-size 0.3s ease-in-out;
+		transition:
+			color 0.3s ease-in-out,
+			font-size 0.3s ease-in-out;
 	}
 </style>
