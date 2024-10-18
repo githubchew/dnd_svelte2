@@ -1,6 +1,6 @@
 <script>
-	// Initialize the flashcards array with some placeholder flashcards
-	let flashcards = [
+	// Load flashcards from local storage or initialize with default values
+	let flashcards = JSON.parse(localStorage.getItem('flashcards')) || [
 		{ front: '❓', back: 'fart', flipped: false, color: getRandomColor() },
 		{ front: '?', back: 'going', flipped: false, color: getRandomColor() },
 		{ front: 'pancake ?', back: '🥞', flipped: false, color: getRandomColor() }
@@ -11,6 +11,7 @@
 
 	function toggleFlip(index) {
 		flashcards[index].flipped = !flashcards[index].flipped;
+		saveFlashcards();
 	}
 
 	function getRandomColor() {
@@ -29,6 +30,7 @@
 		];
 		newFrontContent = '';
 		newBackContent = '';
+		saveFlashcards();
 	}
 
 	function shuffleFlashcards() {
@@ -36,12 +38,17 @@
 			.map((value) => ({ value, sort: Math.random() }))
 			.sort((a, b) => a.sort - b.sort)
 			.map(({ value }) => value);
+		saveFlashcards();
 	}
 
 	function handleKeyDown(event) {
 		if (event.key === 'Enter') {
 			addFlashcard();
 		}
+	}
+
+	function saveFlashcards() {
+		localStorage.setItem('flashcards', JSON.stringify(flashcards));
 	}
 </script>
 

@@ -11,14 +11,7 @@
 
 <section>
 	<h1>
-		<span class="welcome">
-			<picture>
-				<source srcset={welcome} type="image/webp" />
-				<img src={welcome_fallback} alt="Welcome" />
-			</picture>
-		</span>
-
-		to your new<br />SvelteKit app
+      pages: flashcards, bd,	
 	</h1>
 
 	<h2>
