@@ -12,7 +12,7 @@
 	  showingQuestions = new Array(flashcards.length).fill(true);
 	});
   
-	function addFlashcard() {
+	async function addFlashcard() {
 	  if (newQuestion && newAnswer) {
 		flashcards = [...flashcards, { question: newQuestion, answer: newAnswer }];
 		showingQuestions = [...showingQuestions, true];
@@ -60,12 +60,12 @@
   <div class="flashcards-app">
 	<h1>SvelteKit Flashcards App</h1>
 	
-	<div class="add-flashcard">
+	<form on:submit|preventDefault={addFlashcard} class="add-flashcard">
 	  <h2>Add New Flashcard</h2>
-	  <input type="text" bind:value={newQuestion} placeholder="Enter question" />
-	  <input type="text" bind:value={newAnswer} placeholder="Enter answer" />
-	  <button on:click={addFlashcard}>Add Flashcard</button>
-	</div>
+	  <input type="text" bind:value={newQuestion} placeholder="Enter question" required />
+	  <input type="text" bind:value={newAnswer} placeholder="Enter answer" required />
+	  <button type="submit">Add Flashcard</button>
+	</form>
   
 	{#if flashcards.length > 0}
 	  <div class="flashcards-row">
