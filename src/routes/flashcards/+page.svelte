@@ -35,21 +35,27 @@
 	}
   
 	function nextCard() {
-	  currentIndex = (currentIndex + 1) % flashcards.length;
+	  if (flashcards.length > 0) {
+		currentIndex = (currentIndex + 1) % flashcards.length;
+	  }
 	}
   
 	function prevCard() {
-	  currentIndex = (currentIndex - 1 + flashcards.length) % flashcards.length;
+	  if (flashcards.length > 0) {
+		currentIndex = (currentIndex - 1 + flashcards.length) % flashcards.length;
+	  }
 	}
   
 	function shuffleDeck() {
-	  let shuffled = flashcards
-		.map(value => ({ value, sort: Math.random() }))
-		.sort((a, b) => a.sort - b.sort)
-		.map(({ value }) => value);
-	  flashcards = shuffled;
-	  showingQuestions = new Array(flashcards.length).fill(true);
-	  currentIndex = 0;
+	  if (flashcards.length > 0) {
+		let shuffled = flashcards
+		  .map(value => ({ value, sort: Math.random() }))
+		  .sort((a, b) => a.sort - b.sort)
+		  .map(({ value }) => value);
+		flashcards = shuffled;
+		showingQuestions = new Array(flashcards.length).fill(true);
+		currentIndex = 0;
+	  }
 	}
   </script>
   
