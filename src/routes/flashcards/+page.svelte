@@ -1,7 +1,11 @@
 <script>
 	import { onMount } from 'svelte';
   
-	let flashcards = [];
+	let flashcards = [
+		{ question: 'What is the capital of France?', answer: 'Paris' },
+		{ question: 'What is 2 + 2?', answer: '4' },
+		{ question: 'What is the color of the sky?', answer: 'Blue' }
+	];
 	let currentIndex = 0;
 	let showingQuestions = [];
 	let newQuestion = '';
