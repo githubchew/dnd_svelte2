@@ -71,12 +71,13 @@
 	  <div class="flashcards-row">
 		{#each flashcards.slice(currentIndex, currentIndex + 5) as flashcard, index}
 		  <div class="flashcard" on:click={() => flipCard(currentIndex + index)}>
-			<div class="flashcard-content">
-			  {#if showingQuestions[currentIndex + index]}
+			<div class="flashcard-content" class:flipped={!showingQuestions[currentIndex + index]}>
+			  <div class="flashcard-front">
 				<p>{flashcard.question}</p>
-			  {:else}
+			  </div>
+			  <div class="flashcard-back">
 				<p>{flashcard.answer}</p>
-			  {/if}
+			  </div>
 			</div>
 		  </div>
 		{/each}
@@ -151,25 +152,44 @@
 	  height: 100px;
 	  perspective: 1000px;
 	  cursor: pointer;
+	  transition: transform 0.3s ease-in-out;
+	}
+  
+	.flashcard:hover {
+	  transform: scale(1.05);
 	}
   
 	.flashcard-content {
 	  width: 100%;
 	  height: 100%;
-	  background-color: #f1f1f1;
+	  position: relative;
+	  transform-style: preserve-3d;
+	  transition: transform 0.6s;
+	}
+  
+	.flashcard-front, .flashcard-back {
+	  position: absolute;
+	  width: 100%;
+	  height: 100%;
+	  backface-visibility: hidden;
 	  display: flex;
 	  align-items: center;
 	  justify-content: center;
 	  border-radius: 10px;
 	  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-	  transition: transform 0.6s;
-	  transform-style: preserve-3d;
 	}
   
-	.flashcard-content p {
-	  font-size: 14px;
-	  text-align: center;
-	  padding: 10px;
+	.flashcard-front {
+	  background-color: #f1f1f1;
+	}
+  
+	.flashcard-back {
+	  background-color: #e1e1e1;
+	  transform: rotateY(180deg);
+	}
+  
+	.flipped {
+	  transform: rotateY(180deg);
 	}
   
 	.controls {
