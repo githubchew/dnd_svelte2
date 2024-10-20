@@ -101,7 +101,7 @@
 		'will',
 		'with',
 		'yes',
-		'first grade',
+		
 		'after',
 		'again',
 		'an',
@@ -143,7 +143,7 @@
 		'walk',
 		'were',
 		'when',
-		'second grade',
+
 		'always',
 		'around',
 		'because',
