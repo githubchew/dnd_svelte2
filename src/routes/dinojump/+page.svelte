@@ -33,7 +33,7 @@
 	let collectibleSound;
 	let jumpSound; // Declare a variable for the jump sound
 	let particles = []; // Array to store particles
-	let monsterSpeed = Math.random() * (5 - 1.5) + 0.5; // Random speed between 1.5 and 5
+	let monsterSpeed = Math.random() * (6 - 1.5) + 0.5; // Random speed between 1.5 and 5
 
 	const emojis = [
 		'🧦socks',
@@ -283,7 +283,17 @@
 		'🪟window',
 		'🪵wood'
 	];
-	const monsterEmojis = ['👹', '👺', '👻ghost', '💀', '👽alien', '🤖robot', '💥⚡👹👿'];
+	const monsterEmojis = [
+		'👹',
+		'👺',
+		'👻ghost',
+		'💀',
+		'👽alien',
+		'🤖robot',
+		'💥⚡👹👿',
+		'🔥fire',
+		'⚠️warning'
+	];
 	const heartEmoji = '❤';
 
 	class Particle {
@@ -805,4 +815,3 @@
 		cursor: pointer;
 	}
 </style>
-

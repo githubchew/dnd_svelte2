@@ -53,6 +53,9 @@
 			<li aria-current={$page.url.pathname === '/connect4' ? 'page' : undefined}>
 				<a href="/connect4">cnt4</a>
 			</li>
+				<li aria-current={$page.url.pathname === '/connect3' ? 'page' : undefined}>
+				<a href="/connect3">cnt3</a>
+			</li>
 		</ul>
 		<svg viewBox="0 0 2 3" aria-hidden="true">
 			<path d="M0,0 L0,3 C0.5,3 0.5,3 1,2 L2,0 Z" />

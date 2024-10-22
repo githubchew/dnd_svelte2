@@ -2,18 +2,19 @@
 	import { onMount } from 'svelte';
 
 	let canvas;
-	const rows = 6;
-	const cols = 7;
+	const rows = 4;
+	const cols = 6;
 	const cellSize = 100;
+	const scaleFactor = 2;
 	const board = Array.from({ length: rows }, () => Array(cols).fill(null));
 	const words = [
-		'apple',
-		'banana',
-		'cherry',
-		'date',
-		'fig',
-		'grape',
-		'kiwi',
+		'🍎 apple',
+		'🍌 banana',
+		'🍒 cherry',
+		'🌴 date',
+		'🍈 fig',
+		'🍇 grape',
+		'🥝 kiwi',
 		'example',
 		'sight',
 		'words',
@@ -111,7 +112,6 @@
 		'will',
 		'with',
 		'yes',
-
 		'after',
 		'again',
 		'an',
@@ -153,7 +153,6 @@
 		'walk',
 		'were',
 		'when',
-
 		'always',
 		'around',
 		'because',
@@ -244,101 +243,101 @@
 		'try',
 		'warm',
 		'NOUNS',
-		'apple',
-		'baby',
-		'back',
-		'ball',
-		'bear',
-		'bed',
-		'bell',
-		'bird',
-		'birthday',
-		'boat',
-		'box',
-		'boy',
-		'bread',
-		'brother',
-		'cake',
-		'car',
-		'cat',
-		'chair',
-		'chicken',
-		'children',
-		'Christmas',
-		'coat',
-		'corn',
-		'cow',
-		'day',
-		'dog',
-		'doll',
-		'door',
-		'duck',
-		'egg',
-		'eye',
-		'farm',
-		'farmer',
-		'father',
-		'feet',
-		'fire',
-		'fish',
-		'floor',
-		'flower',
-		'game',
-		'garden',
-		'girl',
-		'goodbye',
-		'grass',
-		'ground',
-		'hand',
-		'head',
-		'hill',
-		'home',
-		'horse',
-		'house',
-		'kitty',
-		'leg',
-		'letter',
-		'man',
-		'men',
-		'milk',
-		'money',
-		'morning',
-		'mother',
-		'name',
-		'nest',
-		'night',
-		'paper',
-		'party',
-		'picture',
-		'pig',
-		'rabbit',
-		'rain',
-		'ring',
-		'robin',
-		'Santa Claus',
-		'school',
-		'seed',
-		'sheep',
-		'shoe',
-		'sister',
-		'snow',
-		'song',
-		'squirrel',
-		'stick',
-		'street',
-		'sun',
-		'table',
-		'thing',
-		'time',
-		'top',
-		'toy',
-		'tree',
-		'watch',
-		'water',
-		'way',
-		'wind',
-		'window',
-		'wood'
+		'🍎 apple',
+		'👶 baby',
+		'🔙 back',
+		'⚽ ball',
+		'🐻 bear',
+		'🛏️ bed',
+		'🔔 bell',
+		'🐦 bird',
+		'🎂 birthday',
+		'⛵ boat',
+		'📦 box',
+		'👦 boy',
+		'🍞 bread',
+		'👨‍👦 brother',
+		'🍰 cake',
+		'🚗 car',
+		'🐱 cat',
+		'🪑 chair',
+		'🐔 chicken',
+		'👶 children',
+		'🎄 Christmas',
+		'🧥 coat',
+		'🌽 corn',
+		'🐄 cow',
+		'📅 day',
+		'🐕 dog',
+		'🪆 doll',
+		'🚪 door',
+		'🦆 duck',
+		'🥚 egg',
+		'👁️ eye',
+		'🌾 farm',
+		'👨‍🌾 farmer',
+		'👨‍👦 father',
+		'👣 feet',
+		'🔥 fire',
+		'🐟 fish',
+		'🪜 floor',
+		'🌸 flower',
+		'🎮 game',
+		'🌻 garden',
+		'👧 girl',
+		'👋 goodbye',
+		'🌿 grass',
+		'🌍 ground',
+		'✋ hand',
+		'🗣️ head',
+		'⛰️ hill',
+		'🏠 home',
+		'🐎 horse',
+		'🏡 house',
+		'🐱 kitty',
+		'🦵 leg',
+		'✉️ letter',
+		'👨 man',
+		'👨‍👨‍👦 men',
+		'🥛 milk',
+		'💰 money',
+		'🌅 morning',
+		'👩‍👦 mother',
+		'📛 name',
+		'🪺 nest',
+		'🌃 night',
+		'📄 paper',
+		'🎉 party',
+		'🖼️ picture',
+		'🐖 pig',
+		'🐇 rabbit',
+		'🌧️ rain',
+		'💍 ring',
+		'🐦 robin',
+		'🎅 Santa Claus',
+		'🏫 school',
+		'🌱 seed',
+		'🐑 sheep',
+		'👞 shoe',
+		'👧 sister',
+		'❄️ snow',
+		'🎵 song',
+		'🐿️ squirrel',
+		'🪵 stick',
+		'🛣️ street',
+		'☀️ sun',
+		'🪑 table',
+		'🔨 thing',
+		'⏰ time',
+		'🔝 top',
+		'🧸 toy',
+		'🌳 tree',
+		'⌚ watch',
+		'💧 water',
+		'🛣️ way',
+		'🌬️ wind',
+		'🪟 window',
+		'🪵 wood',
 	];
 	const wordBoard = Array.from({ length: rows }, () => Array(cols).fill(null));
 	let currentPlayer = 'red';
@@ -348,13 +347,19 @@
 	let winningColors = ['green', 'pink', 'gold'];
 	let currentWinningColorIndex = 0;
 	let colorInterval;
+	let emojiAnimationFrame;
+	let emojiOffset = 0;
+	let emojiDirection = 1;
 
 	function drawBoard(ctx) {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		ctx.fillStyle = 'blue';
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-		// Draw the indicator circle
+		ctx.strokeStyle = currentPlayer;
+		ctx.lineWidth = 2;
+		ctx.strokeRect(indicatorCol * cellSize, cellSize, cellSize, rows * cellSize);
+
 		ctx.beginPath();
 		ctx.arc(indicatorCol * cellSize + cellSize / 2, cellSize / 2, cellSize / 2 - 5, 0, 2 * Math.PI);
 		ctx.fillStyle = currentPlayer;
@@ -373,16 +378,9 @@
 				);
 
 				const isWinningCell = winningSequence.some(([r, c]) => r === row && c === col);
-
-				let fillColor;
-				if (isWinningCell) {
-					fillColor =
-						currentWinningColorIndex === winningColors.length
-							? board[row][col]
-							: winningColors[currentWinningColorIndex];
-				} else {
-					fillColor = board[row][col] || 'white';
-				}
+				let fillColor = isWinningCell
+					? (currentWinningColorIndex === winningColors.length ? board[row][col] : winningColors[currentWinningColorIndex])
+					: (board[row][col] || 'white');
 
 				ctx.fillStyle = fillColor;
 				ctx.fill();
@@ -392,6 +390,15 @@
 					ctx.strokeStyle = board[row][col];
 					ctx.lineWidth = 3;
 					ctx.stroke();
+
+					ctx.fillStyle = 'black';
+					ctx.font = 'bold 24px Arial';
+					ctx.textAlign = 'right';
+					ctx.fillText(
+						'👍',
+						col * cellSize + cellSize - 10,
+						(row + 1) * cellSize + 10 + emojiOffset
+					);
 				}
 
 				if (board[row][col]) {
@@ -399,7 +406,7 @@
 						wordBoard[row][col] = words[Math.floor(Math.random() * words.length)];
 					}
 					ctx.fillStyle = 'black';
-					ctx.font = 'bold 20px Arial';
+					ctx.font = 'bold 22px Arial';
 					ctx.textAlign = 'center';
 					ctx.fillText(
 						wordBoard[row][col],
@@ -506,13 +513,13 @@
 	function checkDirection(row, col, rowDir, colDir) {
 		let count = 0;
 		let sequence = [];
-		for (let i = -3; i <= 3; i++) {
+		for (let i = -2; i <= 2; i++) {
 			const r = row + i * rowDir;
 			const c = col + i * colDir;
 			if (r >= 0 && r < rows && c >= 0 && c < cols && board[r][c] === currentPlayer) {
 				count++;
 				sequence.push([r, c]);
-				if (count === 4) return sequence;
+				if (count === 3) return sequence;
 			} else {
 				count = 0;
 				sequence = [];
@@ -532,6 +539,26 @@
 		clearInterval(colorInterval);
 	}
 
+	function animateEmojis() {
+		emojiOffset += emojiDirection * 1; // Slower increment
+		if (emojiOffset > 5 || emojiOffset < -5) {
+			emojiDirection *= -1;
+		}
+		drawBoard(canvas.getContext('2d'));
+		emojiAnimationFrame = requestAnimationFrame(() => setTimeout(animateEmojis, 50)); // Add delay
+	}
+
+	function startEmojiAnimation() {
+		if (!emojiAnimationFrame) {
+			animateEmojis();
+		}
+	}
+
+	function stopEmojiAnimation() {
+		cancelAnimationFrame(emojiAnimationFrame);
+		emojiAnimationFrame = null;
+	}
+
 	function resetGame() {
 		board.forEach((row) => row.fill(null));
 		wordBoard.forEach((row) => row.fill(null));
@@ -540,19 +567,25 @@
 		winningSequence = [];
 		currentWinningColorIndex = 0;
 		stopColorLoop();
+		stopEmojiAnimation();
 		drawBoard(canvas.getContext('2d'));
 	}
 
 	onMount(() => {
-		const dpr = window.devicePixelRatio || 1;
-		canvas.width = cols * cellSize * dpr;
-		canvas.height = (rows + 1) * cellSize * dpr;
+		canvas.width = cols * cellSize * scaleFactor;
+		canvas.height = (rows + 1) * cellSize * scaleFactor;
+		
 		canvas.style.width = `${cols * cellSize}px`;
 		canvas.style.height = `${(rows + 1) * cellSize}px`;
+
 		const ctx = canvas.getContext('2d');
-		ctx.scale(dpr, dpr);
+		ctx.scale(scaleFactor, scaleFactor);
 		drawBoard(ctx);
-		return () => stopColorLoop();
+		startEmojiAnimation();
+		return () => {
+			stopColorLoop();
+			stopEmojiAnimation();
+		};
 	});
 </script>
 
@@ -579,3 +612,4 @@
 		margin-top: 20px;
 	}
 </style>
+
