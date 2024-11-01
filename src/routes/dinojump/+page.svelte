@@ -33,7 +33,8 @@
 	let collectibleSound;
 	let jumpSound; // Declare a variable for the jump sound
 	let particles = []; // Array to store particles
-	let monsterSpeed = Math.random() * (6 - 1.5) + 0.5; // Random speed between 1.5 and 5
+	let originalMonsterSpeed = 1.5; // Store the original monster speed
+	let monsterSpeed = originalMonsterSpeed; // Initialize with the original speed
 
 	const emojis = [
 		'🧦socks',
@@ -380,6 +381,9 @@
 		if (event.key === ' ' || event.key === 'z') {
 			jump();
 		}
+		if (event.key === '=') {
+			changeMonsterSpeed();
+		}
 	}
 
 	function jump() {
@@ -708,6 +712,11 @@
 			ctx.fillText('Game Over', canvas.width / 2 - 150, canvas.height / 2);
 		}
 
+		// Draw monster speed on the canvas
+		ctx.fillStyle = 'black';
+		ctx.font = '20px Arial';
+		ctx.fillText(`Monster Speed: ${monsterSpeed.toFixed(1)}`, 10, 60); // Display speed with one decimal place
+
 		animationFrameId = requestAnimationFrame(updateGame);
 	}
 
@@ -731,6 +740,7 @@
 		showSadFace = false;
 		isBackgroundRed = false;
 		isAnimating = false;
+		monsterSpeed = originalMonsterSpeed; // Reset monster speed to original
 	}
 
 	function handleNewGame() {
@@ -743,6 +753,10 @@
 
 	function toggleDebugMode() {
 		debugMode = !debugMode;
+	}
+
+	function changeMonsterSpeed() {
+		monsterSpeed += 0.1; // Increase monster speed by 0.1
 	}
 
 	onMount(() => {
@@ -776,6 +790,7 @@
 		if (collectibleSound.readyState >= 4 && jumpSound.readyState >= 4) {
 			console.log('Starting game');
 			updateGame(); // Start the game loop
+			setInterval(changeMonsterSpeed, 10000); // Increase monster speed every 10 seconds
 		}
 	}
 </script>
@@ -793,6 +808,7 @@
 
 <button on:click={handleNewGame}>New Game</button>
 <button on:click={toggleDebugMode}>{debugMode ? 'Disable' : 'Enable'} Debug Mode</button>
+<button on:click={changeMonsterSpeed}>Increase Monster Speed</button>
 
 <audio id="collectible-sound" src="retro-coin-1.mp3" preload="auto"></audio>
 <audio id="jump-sound" src="cartoon-jump-1.mp3" preload="auto"></audio>
