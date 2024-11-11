@@ -53,8 +53,11 @@
 			<li aria-current={$page.url.pathname === '/connect4' ? 'page' : undefined}>
 				<a href="/connect4">cnt4</a>
 			</li>
-				<li aria-current={$page.url.pathname === '/connect3' ? 'page' : undefined}>
+			<li aria-current={$page.url.pathname === '/connect3' ? 'page' : undefined}>
 				<a href="/connect3">cnt3</a>
+			</li>
+			<li aria-current={$page.url.pathname === '/flashcardsw' ? 'page' : undefined}>
+				<a href="/flashcardsw">fcsw</a>
 			</li>
 		</ul>
 		<svg viewBox="0 0 2 3" aria-hidden="true">
