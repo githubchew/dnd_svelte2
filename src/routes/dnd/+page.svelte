@@ -29,7 +29,18 @@
 		{ id: 23, title: 'w' },
 		{ id: 24, title: 'x' },
 		{ id: 25, title: 'y' },
-		{ id: 26, title: 'z' }
+		{ id: 26, title: 'z' },
+		{ id: 27, title: '🍎' },
+		{ id: 28, title: '🍌' },
+		{ id: 29, title: '🐱' },
+		{ id: 30, title: '🐶' },
+		{ id: 31, title: '🥚' },
+		{ id: 32, title: '🐘' },
+		{ id: 33, title: '🌺' },
+		{ id: 34, title: '👧' },
+		{ id: 35, title: '👒' },
+		{ id: 36, title: '🍦' },
+		{ id: 37, title: '🪼' }
 	];
 	let items2 = [
 		{ id: 200, title: '😊' },
@@ -63,7 +74,18 @@
 		{ id: 122, title: 'w' },
 		{ id: 123, title: 'x' },
 		{ id: 124, title: 'y' },
-		{ id: 125, title: 'z' }
+		{ id: 125, title: 'z' },
+		{ id: 27, title: '🍎' },
+		{ id: 28, title: '🍌' },
+		{ id: 29, title: '🐱' },
+		{ id: 30, title: '🐶' },
+		{ id: 31, title: '🥚' },
+		{ id: 32, title: '🐘' },
+		{ id: 33, title: '🌺' },
+		{ id: 34, title: '👧' },
+		{ id: 35, title: '👒' },
+		{ id: 36, title: '🍦' },
+		{ id: 37, title: '🪼' }
 	];
 </script>
 
